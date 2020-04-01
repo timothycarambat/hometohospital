@@ -28,7 +28,7 @@
         <i class="material-icons">location_city</i>
         Location List
       </a>
-      <a class="mdl-navigation__link {{Request::is('about') ? 'active ' : ''}}" href="">
+      <a class="mdl-navigation__link {{Request::is('about') ? 'active ' : ''}}" href="/about">
         <i class="material-icons">info_outline</i>
         About
       </a>

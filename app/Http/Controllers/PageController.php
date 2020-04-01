@@ -84,4 +84,10 @@ class PageController extends Controller
       'page' => 'donor_new'
     ]);
   }
+
+  public function about(Request $request) {
+    return view('about')->with([
+      'page' => 'about'
+    ]);
+  }
 }
