@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Redirect;
 
 use App\Donor;
 use App\Utils;
@@ -10,8 +11,12 @@ use App\Utils;
 class PageController extends Controller
 {
   public function home(Request $request) {
-    $city = is_null($request->city) ? 'New York City' : $request->city;
-    $soc = is_null($request->soc) ? 'New York' : $request->soc;
+    if (Donor::count() == 0){
+      return Redirect::to('/donors');
+    }
+
+    $city = is_null($request->city) ? Donor::first()->city : $request->city;
+    $soc = is_null($request->soc) ? Donor::first()->soc : $request->soc;
     $donors = Donor::getDonorByLocation($city, $soc);
 
     return view('home')->with([
@@ -62,6 +67,21 @@ class PageController extends Controller
       'page' => 'donors',
       'donor_count' => $donors->count(),
       'donors' => $donors->paginate(50),
+    ]);
+  }
+
+  public function donor_details(Request $request) {
+    $donor = Donor::find($request->id);
+
+    return view('donor_detail')->with([
+      'page' => 'donor_detail',
+      'donor' => $donor,
+    ]);
+  }
+
+  public function new_donor(Request $request) {
+    return view('donor_new')->with([
+      'page' => 'donor_new'
     ]);
   }
 }

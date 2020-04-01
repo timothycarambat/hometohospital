@@ -1,4 +1,4 @@
-<h3> There Are <a href="" style="cursor: text">{{$donor_count}}</a> Donors<h3>
+<h3> There Are <a href="" style="cursor: text">{{number_format($donor_count)}}</a> Donors<h3>
 
   <div class="mdl-grid">
         <div class="demo-card-full-width mdl-card mdl-shadow--2dp">
@@ -29,5 +29,6 @@
               @endforeach
             </tbody>
           </table>
+          {{$donors->links()}}
         </div>
   </div>

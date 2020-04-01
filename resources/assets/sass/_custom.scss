@@ -39,10 +39,13 @@
   width: 100%;
 
   .donor-title {
-    color: $brand-secondary;
+    color: $brand-secondary !important;
   }
 }
 
+.mdl-navigation__link.active {
+    background-color: #e0e0e0 !important;
+}
 
 .pagination{
   li{
@@ -74,4 +77,19 @@
   }
   font-size: 20px;
   text-align: center;
+}
+
+.table-header {
+  font-size: 20px !important;
+}
+
+.mdl-chip.success {
+  background-color: lighten($brand-success, 20%);
+}
+
+.form-input {
+  margin: 10px;
+  & > input, & > label{
+    font-size:25px;
+  }
 }

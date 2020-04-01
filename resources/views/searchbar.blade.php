@@ -18,10 +18,17 @@
         </form>
 
       </div>
+      <div class="mdl-grid">
+        <div class="mdl-layout-spacer"></div>
+        <div class="mdl-cell mdl-cell--8-col">
+          <a  href='/donor/new' style='font-size: 25px' class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            Become a Donor
+          </a>
+        </div>
+
+      </div>
       <br>
-      <a style="margin-left: 30%" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-        Become a Donor
-      </a>
+
     </div>
     <div class="mdl-layout-spacer"></div>
 

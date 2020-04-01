@@ -22,6 +22,7 @@ class CreateDonorsTable extends Migration
             $table->text('city');
             $table->text('soc');
             $table->longText('location');
+            $table->longText('hash');
 
             $table->timestamps();
         });

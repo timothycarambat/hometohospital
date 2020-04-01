@@ -22,7 +22,7 @@ class DonorTableSeeder extends Seeder
       ];
       $items = Item::get()->toArray();
 
-      for ($x = 0; $x <= 4000; $x++) {
+      for ($x = 0; $x <= 10; $x++) {
           $randLocation = $locations[array_rand($locations)];
           $location = join($randLocation, ' ,');
           $faker = Faker::create();
@@ -36,6 +36,7 @@ class DonorTableSeeder extends Seeder
             'city' => $randLocation[0],
             'soc' => $randLocation[1],
             'location' => $location,
+            'hash' => str_random(40),
           ]);
 
 

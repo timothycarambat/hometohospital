@@ -1,4 +1,4 @@
-<h3> There Are <a href="" style="cursor: text">{{$donor_count}}</a> Donors in <a href="" style="cursor: text">{{$city}}, {{$soc}}</a><h3>
+<h3> There Are <a href="" style="cursor: text">{{number_format($donor_count)}}</a> Donors in <a href="" style="cursor: text">{{$city}}, {{$soc}}</a><h3>
 
   <div class="mdl-grid">
     @foreach($donors as $donor)
@@ -68,7 +68,7 @@
               Show Contact
             </a>
 
-            <a herf='/donor/{{$donor->id}}/details' class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+            <a href='/donor/{{$donor->id}}/details' class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
               More
               <i class="material-icons">launch</i>
             </a>
@@ -82,4 +82,4 @@
       </div>
     @endforeach
   </div>
-  {{$donors->links()}}
+  {{$donors->appends(['lookup' => request()->lookup])->links()}}

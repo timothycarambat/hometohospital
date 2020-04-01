@@ -763,6 +763,12 @@ module.exports = __webpack_require__(36);
 __webpack_require__(9);
 __webpack_require__(35);
 
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
 /***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -32274,13 +32280,74 @@ module.exports = function spread(callback) {
 /***/ (function(module, exports) {
 
 $(function () {
+  $(document).ready(function () {
+    setTimeout(function () {
+      $('input[data-required=true]').attr('required', true);
+    }, 500);
+  });
 
   window.getEmail = function (id) {
-    fetch("/donor/" + id + "/get_email").then(function (response) {
+    fetch('/donor/' + id + '/get_email').then(function (response) {
       return response.json();
     }).then(function (data) {
       if (data.status) {
-        location.href = "mailto:" + data.result + "?subject=Interest In Healthcare Supplies&body=Hello, I saw your account on hometohospital.com and wanted to contact you about supplies you could make or donate.";
+        location.href = 'mailto:' + data.result + '?subject=Interest In Healthcare Supplies&body=Hello, I saw your account on hometohospital.com and wanted to contact you about supplies you could make or donate.';
+      }
+    });
+  };
+
+  window.toggleSubmitLoader = function () {
+    $('#loader').attr('hidden') ? $('#loader').attr('hidden', false) : $('#loader').attr('hidden', true);
+    $('#submit').attr('hidden') ? $('#submit').attr('hidden', false) : $('#submit').attr('hidden', true);
+  };
+
+  window.submitDonor = function () {
+    toggleSubmitLoader();
+    var errorFields = [];
+    var items = [];
+    var fields = ['first_name', 'last_name', 'bio', 'email', 'location'];
+    var required = ['first_name', 'last_name', 'email', 'location'];
+    var data = {};
+
+    // validate input/textarea fields
+    fields.map(function (field) {
+      var value = $('[name=\'' + field + '\']').val();
+
+      if (value.length === 0 && required.includes(field)) {
+        errorFields.push(field);
+      }
+      data[field] = value;
+    });
+
+    // collect all items
+    $('tr.is-selected').each(function (idx, el) {
+      items.push([$(el).data('item-id'), $(el).data('item-type')]);
+    });
+
+    // push error message to array if you have noting selected
+    items.length === 0 ? errorFields.push('items') : null;
+    // show errors
+    if (errorFields.length > 0) {
+      toggleSubmitLoader();
+      alert(errorFields.join(' ,') + ' cannot be empty.');
+      return false;
+    }
+    // items appended to data obj
+    data.items = items;
+
+    $.ajax({
+      url: '/donor/new/submit',
+      type: 'POST',
+      data: data,
+      success: function success(result) {
+        var res = JSON.parse(result);
+
+        if (res.status) {
+          window.location = '/donor/' + res.id + '/details';
+        } else {
+          alert(res.msg);
+          toggleSubmitLoader();
+        }
       }
     });
   };

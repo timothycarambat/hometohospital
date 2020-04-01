@@ -1,4 +1,4 @@
-<h3> There Are <a href="" style="cursor: text">{{$location_count}}</a> Locations<h3>
+<h3> There Are <a href="" style="cursor: text">{{number_format($location_count)}}</a> Locations<h3>
 
   <div class="mdl-grid">
     @foreach($locations as $key => $locations_by_key)

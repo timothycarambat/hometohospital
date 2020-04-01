@@ -40,7 +40,11 @@
 }
 
 .demo-card-full-width .donor-title {
-  color: #7c4dff;
+  color: #7c4dff !important;
+}
+
+.mdl-navigation__link.active {
+  background-color: #e0e0e0 !important;
 }
 
 .pagination {
@@ -83,6 +87,23 @@
   margin-right: 10px;
 }
 
+.table-header {
+  font-size: 20px !important;
+}
+
+.mdl-chip.success {
+  background-color: #67dbac;
+}
+
+.form-input {
+  margin: 10px;
+}
+
+.form-input > input,
+.form-input > label {
+  font-size: 25px;
+}
+
 .search-card {
   min-height: 0;
   margin: auto;
@@ -123,7 +144,7 @@
   }
 
   .mdl-container {
-    padding-top: 15%;
+    padding-top: 15% !important;
   }
 }
 

@@ -19,7 +19,7 @@
                     </div>
                     <div class="mdl-card__supporting-text" style="font-size: 20px;">
                       It looks like no one has signed up for to be a Donor yet. <br><br>
-                      <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                      <a href='/donor/new' class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
                         Be the First Donor!
                       </a>
                       <br><br>

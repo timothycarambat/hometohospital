@@ -15,6 +15,7 @@ class Donor extends Model
     'city',
     'soc',
     'location',
+    'hash',
   ];
 
   public static function getDonorByLocation($city, $soc){

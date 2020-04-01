@@ -9,16 +9,16 @@
       	<link rel="apple-touch-icon" sizes="76x76" href="images/apple-icon.png">
       	<link rel="icon" href="/logo.png">
 
-        <title>{{$_ENV['APP_NAME']}}</title>
+        <title>🏠{{$_ENV['APP_NAME']}} 🏥</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-deep_purple.min.css" />
-        <link href="css/app.css" rel="stylesheet" type="text/css"></link>
+        <link href="/css/app.css" rel="stylesheet" type="text/css"></link>
 
         <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-        <script src="js/app.js"></script>
+        <script src="/js/app.js"></script>
     </head>
     <body>
       @include('header')

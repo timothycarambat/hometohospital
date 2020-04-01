@@ -17,6 +17,7 @@ Route::get('/locations', 'PageController@locations');
 Route::get('/donors', 'PageController@donors');
 
 
-
-
 Route::get('/donor/{id}/get_email', 'DonorController@getEmail');
+Route::get('/donor/{id}/details', 'PageController@donor_details');
+Route::get('/donor/new', 'PageController@new_donor');
+Route::post('/donor/new/submit', 'DonorController@new_donor');
