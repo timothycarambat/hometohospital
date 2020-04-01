@@ -1,0 +1,137 @@
+.mdl-navigation__link:hover {
+  color: #3f51b5 !important;
+}
+
+.mdl-layout__content {
+  width: 100%;
+  margin-left: 4%;
+}
+
+.donation-cell {
+  margin: 0px;
+  width: 50%;
+}
+
+.donor-list-header {
+  text-decoration: underline;
+  color: #7c4dff;
+}
+
+.donor-check {
+  font-size: 13px;
+  color: green;
+}
+
+.demo-card-wide {
+  min-height: 100%;
+}
+
+.mdl-card--border {
+  bottom: 0;
+  position: absolute;
+}
+
+.mdl-card__supporting-text {
+  height: 320px;
+}
+
+.demo-card-full-width {
+  width: 100%;
+}
+
+.demo-card-full-width .donor-title {
+  color: #7c4dff;
+}
+
+.pagination {
+  font-size: 20px;
+  text-align: center;
+}
+
+.pagination li {
+  height: 30px;
+  width: 30px;
+  color: rgba(0, 0, 0, 0.5);
+  -webkit-transition: color 2s;
+  transition: color 2s;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 30px;
+}
+
+.pagination li[active] {
+  background: #2196F3;
+  border-radius: 50%;
+  color: white;
+}
+
+.pagination li[active]:hover {
+  color: white;
+}
+
+.pagination li:hover {
+  color: black;
+  -webkit-transition: color 2s;
+  transition: color 2s;
+}
+
+.pagination li:first-child {
+  margin-left: 10px;
+}
+
+.pagination li:last-child {
+  margin-right: 10px;
+}
+
+.search-card {
+  min-height: 0;
+  margin: auto;
+  width: 100%;
+}
+
+.search-card .mdl-textfield {
+  margin: auto;
+  padding: 10px;
+  width: 100%;
+}
+
+.search-card .mdl-textfield.is-focused {
+  border: 4px solid #8f67ff;
+  -webkit-transition: all 0.30s ease-in-out;
+  -moz-transition: all 0.30s ease-in-out;
+  -ms-transition: all 0.30s ease-in-out;
+  -o-transition: all 0.30s ease-in-out;
+}
+
+.search-card .mdl-textfield__input {
+  border: 0;
+}
+
+.search-card .material-icons {
+  position: absolute;
+}
+
+.search-card .material-icons + .mdl-textfield__input {
+  padding-left: 29px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+@media only screen and (max-width: 768px) {
+  .demo-card-full-width {
+    overflow: scroll;
+  }
+
+  .mdl-container {
+    padding-top: 15%;
+  }
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.mdl-container {
+  padding-top: 5%;
+}
+

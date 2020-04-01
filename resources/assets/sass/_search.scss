@@ -1,0 +1,32 @@
+.search-card {
+  min-height: 0;
+  margin: auto;
+  width: 100%;
+
+  .mdl-textfield {
+    margin: auto;
+    padding: 10px;
+    width: 100%;
+
+    &.is-focused {
+      border:             4px solid lighten($brand-secondary, 5%);
+      -webkit-transition: all 0.30s ease-in-out;
+         -moz-transition: all 0.30s ease-in-out;
+          -ms-transition: all 0.30s ease-in-out;
+           -o-transition: all 0.30s ease-in-out;
+    }
+  }
+
+  .mdl-textfield__input {
+    border: 0;
+  }
+
+  .material-icons {
+    position: absolute;
+  }
+
+  .material-icons + .mdl-textfield__input {
+    padding-left: 29px;
+    box-sizing: border-box;
+  }
+}
