@@ -71,7 +71,7 @@
 
 
 var bind = __webpack_require__(2);
-var isBuffer = __webpack_require__(17);
+var isBuffer = __webpack_require__(18);
 
 /*global toString:true*/
 
@@ -381,7 +381,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(20);
+var normalizeHeaderName = __webpack_require__(21);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -471,7 +471,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20)))
 
 /***/ }),
 /* 2 */
@@ -499,12 +499,12 @@ module.exports = function bind(fn, thisArg) {
 
 
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(21);
-var buildURL = __webpack_require__(23);
-var parseHeaders = __webpack_require__(24);
-var isURLSameOrigin = __webpack_require__(25);
+var settle = __webpack_require__(22);
+var buildURL = __webpack_require__(24);
+var parseHeaders = __webpack_require__(25);
+var isURLSameOrigin = __webpack_require__(26);
 var createError = __webpack_require__(4);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(26);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(27);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -601,7 +601,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(27);
+      var cookies = __webpack_require__(28);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -685,7 +685,7 @@ module.exports = function xhrAdapter(config) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(22);
+var enhanceError = __webpack_require__(23);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -746,7 +746,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(8);
-module.exports = __webpack_require__(36);
+module.exports = __webpack_require__(37);
 
 
 /***/ }),
@@ -761,7 +761,8 @@ module.exports = __webpack_require__(36);
  */
 
 __webpack_require__(9);
-__webpack_require__(35);
+__webpack_require__(36);
+__webpack_require__(42);
 
 $.ajaxSetup({
     headers: {
@@ -784,8 +785,10 @@ window._ = __webpack_require__(10);
 
 try {
   window.$ = window.jQuery = __webpack_require__(13);
+  window.jscroll = __webpack_require__(14);
+  window.btt = __webpack_require__(43);
 
-  __webpack_require__(14);
+  __webpack_require__(15);
 } catch (e) {}
 
 /**
@@ -794,7 +797,7 @@ try {
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = __webpack_require__(15);
+window.axios = __webpack_require__(16);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -28614,6 +28617,237 @@ return jQuery;
 /***/ (function(module, exports) {
 
 /*!
+ * jScroll - jQuery Plugin for Infinite Scrolling / Auto-Paging
+ * @see @link{https://jscroll.com}
+ *
+ * @copyright Philip Klauzinski
+ * @license Dual licensed under the MIT and GPL Version 2 licenses
+ * @author Philip Klauzinski (https://webtopian.com)
+ * @version 2.4.1
+ * @requires jQuery v1.8.0+
+ * @preserve
+ */
+(function($) {
+
+    'use strict';
+
+    // Define the jscroll namespace and default settings
+    $.jscroll = {
+        defaults: {
+            debug: false,
+            autoTrigger: true,
+            autoTriggerUntil: false,
+            loadingHtml: '<small>Loading...</small>',
+            loadingFunction: false,
+            padding: 0,
+            nextSelector: 'a:last',
+            contentSelector: '',
+            pagingSelector: '',
+            callback: false
+        }
+    };
+
+    // Constructor
+    var jScroll = function($e, options) {
+
+        // Private vars and methods
+        var _data = $e.data('jscroll'),
+            _userOptions = (typeof options === 'function') ? { callback: options } : options,
+            _options = $.extend({}, $.jscroll.defaults, _userOptions, _data || {}),
+            _isWindow = ($e.css('overflow-y') === 'visible'),
+            _$next = $e.find(_options.nextSelector).first(),
+            _$window = $(window),
+            _$body = $('body'),
+            _$scroll = _isWindow ? _$window : $e,
+            _nextHref = $.trim(_$next.prop('href') + ' ' + _options.contentSelector),
+
+            // Check if a loading image is defined and preload
+            _preloadImage = function() {
+                var src = $(_options.loadingHtml).filter('img').attr('src');
+                if (src) {
+                    var image = new Image();
+                    image.src = src;
+                }
+            },
+
+            // Wrap inner content, if it isn't already
+            _wrapInnerContent = function() {
+                if (!$e.find('.jscroll-inner').length) {
+                    $e.contents().wrapAll('<div class="jscroll-inner" />');
+                }
+            },
+
+            // Find the next link's parent, or add one, and hide it
+            _nextWrap = function($next) {
+                var $parent;
+                if (_options.pagingSelector) {
+                    $next.closest(_options.pagingSelector).hide();
+                } else {
+                    $parent = $next.parent().not('.jscroll-inner,.jscroll-added').addClass('jscroll-next-parent').hide();
+                    if (!$parent.length) {
+                        $next.wrap('<div class="jscroll-next-parent" />').parent().hide();
+                    }
+                }
+            },
+
+            // Remove the jscroll behavior and data from an element
+            _destroy = function() {
+                return _$scroll.unbind('.jscroll')
+                    .removeData('jscroll')
+                    .find('.jscroll-inner').children().unwrap()
+                    .filter('.jscroll-added').children().unwrap();
+            },
+
+            // Observe the scroll event for when to trigger the next load
+            _observe = function() {
+                if ($e.is(':visible')) {
+                    _wrapInnerContent();
+                    var $inner = $e.find('div.jscroll-inner').first(),
+                        data = $e.data('jscroll'),
+                        borderTopWidth = parseInt($e.css('borderTopWidth'), 10),
+                        borderTopWidthInt = isNaN(borderTopWidth) ? 0 : borderTopWidth,
+                        iContainerTop = parseInt($e.css('paddingTop'), 10) + borderTopWidthInt,
+                        iTopHeight = _isWindow ? _$scroll.scrollTop() : $e.offset().top,
+                        innerTop = $inner.length ? $inner.offset().top : 0,
+                        iTotalHeight = Math.ceil(iTopHeight - innerTop + _$scroll.height() + iContainerTop);
+
+                    if (!data.waiting && iTotalHeight + _options.padding >= $inner.outerHeight()) {
+                        _debug('info', 'jScroll:', $inner.outerHeight() - iTotalHeight, 'from bottom. Loading next request...');
+                        return _load();
+                    }
+                }
+            },
+
+            // Check if the href for the next set of content has been set
+            _checkNextHref = function(data) {
+                data = data || $e.data('jscroll');
+                if (!data || !data.nextHref) {
+                    _debug('warn', 'jScroll: nextSelector not found - destroying');
+                    _destroy();
+                    return false;
+                } else {
+                    _setBindings();
+                    return true;
+                }
+            },
+
+            _setBindings = function() {
+                var $next = $e.find(_options.nextSelector).first();
+                if (!$next.length) {
+                    return;
+                }
+                if (_options.autoTrigger && (_options.autoTriggerUntil === false || _options.autoTriggerUntil > 0)) {
+                    _nextWrap($next);
+                    var scrollingBodyHeight = _$body.height() - $e.offset().top,
+                        scrollingHeight = ($e.height() < scrollingBodyHeight) ? $e.height() : scrollingBodyHeight,
+                        windowHeight = ($e.offset().top - _$window.scrollTop() > 0) ? _$window.height() - ($e.offset().top - $(window).scrollTop()) : _$window.height();
+                    if (scrollingHeight <= windowHeight) {
+                        _observe();
+                    }
+                    _$scroll.unbind('.jscroll').bind('scroll.jscroll', function() {
+                        return _observe();
+                    });
+                    if (_options.autoTriggerUntil > 0) {
+                        _options.autoTriggerUntil--;
+                    }
+                } else {
+                    _$scroll.unbind('.jscroll');
+                    $next.bind('click.jscroll', function() {
+                        _nextWrap($next);
+                        _load();
+                        return false;
+                    });
+                }
+            },
+
+            // Load the next set of content, if available
+            _load = function() {
+                var $inner = $e.find('div.jscroll-inner').first(),
+                    data = $e.data('jscroll');
+
+                data.waiting = true;
+                $inner.append('<div class="jscroll-added" />')
+                    .children('.jscroll-added').last()
+                    .html('<div class="jscroll-loading" id="jscroll-loading">' + _options.loadingHtml + '</div>')
+                    .promise()
+                    .done(function() {
+                        if (_options.loadingFunction) {
+                            _options.loadingFunction();
+                        }
+                    });
+
+                return $e.animate({scrollTop: $inner.outerHeight()}, 0, function() {
+                    var nextHref = data.nextHref;
+                    $inner.find('div.jscroll-added').last().load(nextHref, function(r, status) {
+                        if (status === 'error') {
+                            return _destroy();
+                        }
+                        var $next = $(this).find(_options.nextSelector).first();
+                        data.waiting = false;
+                        data.nextHref = $next.prop('href') ? $.trim($next.prop('href') + ' ' + _options.contentSelector) : false;
+                        $('.jscroll-next-parent', $e).remove(); // Remove the previous next link now that we have a new one
+                        _checkNextHref();
+                        if (_options.callback) {
+                            _options.callback.call(this, nextHref);
+                        }
+                        _debug('dir', data);
+                    });
+                });
+            },
+
+            // Safe console debug - http://klauzinski.com/javascript/safe-firebug-console-in-javascript
+            _debug = function(m) {
+                if (_options.debug && typeof console === 'object' && (typeof m === 'object' || typeof console[m] === 'function')) {
+                    if (typeof m === 'object') {
+                        var args = [];
+                        for (var sMethod in m) {
+                            if (typeof console[sMethod] === 'function') {
+                                args = (m[sMethod].length) ? m[sMethod] : [m[sMethod]];
+                                console[sMethod].apply(console, args);
+                            } else {
+                                console.log.apply(console, args);
+                            }
+                        }
+                    } else {
+                        console[m].apply(console, Array.prototype.slice.call(arguments, 1));
+                    }
+                }
+            };
+
+        // Initialization
+        $e.data('jscroll', $.extend({}, _data, {initialized: true, waiting: false, nextHref: _nextHref}));
+        _wrapInnerContent();
+        _preloadImage();
+        _setBindings();
+
+        // Expose API methods via the jQuery.jscroll namespace, e.g. $('sel').jscroll.method()
+        $.extend($e.jscroll, {
+            destroy: _destroy
+        });
+        return $e;
+    };
+
+    // Define the jscroll plugin method and loop
+    $.fn.jscroll = function(m) {
+        return this.each(function() {
+            var $this = $(this),
+                data = $this.data('jscroll');
+
+            // Instantiate jScroll on this element if it hasn't been already
+            if (data && data.initialized) {
+                return;
+            }
+            jScroll($this, m);
+        });
+    };
+
+})(jQuery);
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+/*!
  * Bootstrap v3.4.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 Twitter, Inc.
  * Licensed under the MIT license
@@ -31196,13 +31430,13 @@ if (typeof jQuery === 'undefined') {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(16);
+module.exports = __webpack_require__(17);
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31210,7 +31444,7 @@ module.exports = __webpack_require__(16);
 
 var utils = __webpack_require__(0);
 var bind = __webpack_require__(2);
-var Axios = __webpack_require__(18);
+var Axios = __webpack_require__(19);
 var defaults = __webpack_require__(1);
 
 /**
@@ -31245,14 +31479,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(6);
-axios.CancelToken = __webpack_require__(33);
+axios.CancelToken = __webpack_require__(34);
 axios.isCancel = __webpack_require__(5);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(34);
+axios.spread = __webpack_require__(35);
 
 module.exports = axios;
 
@@ -31261,7 +31495,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 /*!
@@ -31288,7 +31522,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31296,8 +31530,8 @@ function isSlowBuffer (obj) {
 
 var defaults = __webpack_require__(1);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(28);
-var dispatchRequest = __webpack_require__(29);
+var InterceptorManager = __webpack_require__(29);
+var dispatchRequest = __webpack_require__(30);
 
 /**
  * Create a new instance of Axios
@@ -31374,7 +31608,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -31564,7 +31798,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31583,7 +31817,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31616,7 +31850,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31644,7 +31878,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31719,7 +31953,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31779,7 +32013,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31854,7 +32088,7 @@ module.exports = (
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31897,7 +32131,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31957,7 +32191,7 @@ module.exports = (
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32016,18 +32250,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(30);
+var transformData = __webpack_require__(31);
 var isCancel = __webpack_require__(5);
 var defaults = __webpack_require__(1);
-var isAbsoluteURL = __webpack_require__(31);
-var combineURLs = __webpack_require__(32);
+var isAbsoluteURL = __webpack_require__(32);
+var combineURLs = __webpack_require__(33);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -32109,7 +32343,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32136,7 +32370,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32157,7 +32391,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32178,7 +32412,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32242,7 +32476,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32276,7 +32510,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports) {
 
 $(function () {
@@ -32402,10 +32636,186 @@ $(function () {
 });
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */
+/***/ (function(module, exports) {
+
+$(function () {
+    $('ul.pagination').hide();
+    $(function () {
+        $('.infinite-scroll').jscroll({
+            autoTrigger: true,
+            loadingHtml: '<div class="slider">\n                            \t  <div class="line"></div>\n                                <div class="subline inc"></div>\n                                <div class="subline dec"></div>\n                            </div>',
+            padding: 0,
+            nextSelector: '.pagination li.active + li a',
+            contentSelector: 'div.infinite-scroll',
+            callback: function callback() {
+                $('ul.pagination').remove();
+            }
+        });
+    });
+
+    btt.addBackToTop();
+});
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+(function (root, factory) {
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else if ((typeof exports === "undefined" ? "undefined" : _typeof(exports)) === 'object' && typeof exports.nodeName !== 'string') {
+    factory(exports);
+  } else {
+    factory(root.commonJsStrict = {});
+  }
+})(typeof self !== 'undefined' ? self : void 0, function (exports) {
+  exports.addBackToTop = addBackToTop; // FUNCTION START
+
+  'use strict';
+
+  function addBackToTop() {
+    var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var _params$backgroundCol = params.backgroundColor,
+        backgroundColor = _params$backgroundCol === void 0 ? '#000' : _params$backgroundCol,
+        _params$cornerOffset = params.cornerOffset,
+        cornerOffset = _params$cornerOffset === void 0 ? 20 : _params$cornerOffset,
+        _params$diameter = params.diameter,
+        diameter = _params$diameter === void 0 ? 56 : _params$diameter,
+        _params$ease = params.ease,
+        ease = _params$ease === void 0 ? inOutSine : _params$ease,
+        _params$id = params.id,
+        id = _params$id === void 0 ? 'back-to-top' : _params$id,
+        _params$innerHTML = params.innerHTML,
+        innerHTML = _params$innerHTML === void 0 ? '<svg viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg>' : _params$innerHTML,
+        _params$onClickScroll = params.onClickScrollTo,
+        onClickScrollTo = _params$onClickScroll === void 0 ? 0 : _params$onClickScroll,
+        _params$scrollContain = params.scrollContainer,
+        scrollContainer = _params$scrollContain === void 0 ? document.body : _params$scrollContain,
+        _params$scrollDuratio = params.scrollDuration,
+        scrollDuration = _params$scrollDuratio === void 0 ? 100 : _params$scrollDuratio,
+        _params$showWhenScrol = params.showWhenScrollTopIs,
+        showWhenScrollTopIs = _params$showWhenScrol === void 0 ? 1 : _params$showWhenScrol,
+        _params$size = params.size,
+        size = _params$size === void 0 ? diameter : _params$size,
+        _params$textColor = params.textColor,
+        textColor = _params$textColor === void 0 ? '#fff' : _params$textColor,
+        _params$zIndex = params.zIndex,
+        zIndex = _params$zIndex === void 0 ? 1 : _params$zIndex;
+    var scrollContainerIsBody = scrollContainer === document.body;
+    var scrollDocumentElement = scrollContainerIsBody && document.documentElement;
+    appendStyles();
+    var upEl = appendElement();
+    var hidden = true;
+    var scrollEmitter = scrollContainerIsBody ? window : scrollContainer;
+    scrollEmitter.addEventListener('scroll', adapt);
+    adapt();
+
+    function adapt() {
+      getScrollTop() >= showWhenScrollTopIs ? show() : hide();
+    }
+
+    function show() {
+      if (!hidden) {
+        return;
+      }
+
+      upEl.className = '';
+      hidden = false;
+    }
+
+    function hide() {
+      if (hidden) {
+        return;
+      }
+
+      upEl.className = 'hidden';
+      hidden = true;
+    }
+
+    function appendElement() {
+      var upEl = document.createElement('div');
+      upEl.id = id;
+      upEl.className = 'hidden';
+      upEl.innerHTML = innerHTML;
+      upEl.addEventListener('click', function (event) {
+        event.preventDefault();
+        scrollUp();
+      });
+      document.body.appendChild(upEl);
+      return upEl;
+    }
+
+    function appendStyles() {
+      var svgSize = Math.round(0.43 * size);
+      var svgTop = Math.round(0.29 * size);
+      var styles = '#' + id + '{background:' + backgroundColor + ';-webkit-border-radius:50%;-moz-border-radius:50%;border-radius:50%;bottom:' + cornerOffset + 'px;-webkit-box-shadow:0 2px 5px 0 rgba(0,0,0,.26);-moz-box-shadow:0 2px 5px 0 rgba(0,0,0,.26);box-shadow:0 2px 5px 0 rgba(0,0,0,.26);color:' + textColor + ';cursor:pointer;display:block;height:' + size + 'px;opacity:1;outline:0;position:fixed;right:' + cornerOffset + 'px;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-transition:bottom .2s,opacity .2s;-o-transition:bottom .2s,opacity .2s;-moz-transition:bottom .2s,opacity .2s;transition:bottom .2s,opacity .2s;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:' + size + 'px;z-index:' + zIndex + '}#' + id + ' svg{display:block;fill:currentColor;height:' + svgSize + 'px;margin:' + svgTop + 'px auto 0;width:' + svgSize + 'px}#' + id + '.hidden{bottom:-' + size + 'px;opacity:0}';
+      var styleEl = document.createElement('style');
+      styleEl.appendChild(document.createTextNode(styles));
+      document.head.insertAdjacentElement('afterbegin', styleEl);
+    }
+
+    function scrollUp() {
+      var scrollTo = typeof onClickScrollTo === 'function' ? onClickScrollTo() : onClickScrollTo;
+      var _window = window,
+          performance = _window.performance,
+          requestAnimationFrame = _window.requestAnimationFrame;
+
+      if (scrollDuration <= 0 || typeof performance === 'undefined' || typeof requestAnimationFrame === 'undefined') {
+        return setScrollTop(scrollTo);
+      }
+
+      var start = performance.now();
+      var initScrollTop = getScrollTop();
+      var pxsToScrollBy = initScrollTop - scrollTo;
+      requestAnimationFrame(step);
+
+      function step(timestamp) {
+        var progress = Math.min((timestamp - start) / scrollDuration, 1);
+        setScrollTop(initScrollTop - Math.round(ease(progress) * pxsToScrollBy));
+
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        }
+      }
+    }
+
+    function getScrollTop() {
+      return scrollContainer.scrollTop || scrollDocumentElement && document.documentElement.scrollTop || 0;
+    }
+
+    function setScrollTop(value) {
+      scrollContainer.scrollTop = value;
+
+      if (scrollDocumentElement) {
+        document.documentElement.scrollTop = value;
+      }
+    }
+
+    function inOutSine(n) {
+      return 0.5 * (1 - Math.cos(Math.PI * n));
+    }
+  } // FUNCTION END
+
+});
 
 /***/ })
 /******/ ]);

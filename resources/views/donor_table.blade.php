@@ -1,6 +1,6 @@
 <h3> There Are <a href="" style="cursor: text">{{number_format($donor_count)}}</a> Donors in <a href="" style="cursor: text">{{$city}}, {{$soc}}</a><h3>
-
-  <div class="mdl-grid">
+<div class="infinite-scroll">
+  <div class="mdl-grid ">
     @foreach($donors as $key => $donor)
       <div class="mdl-cell mdl-cell-3">
         <div class="demo-card-wide mdl-card mdl-shadow--2dp">
@@ -129,5 +129,6 @@
         </div>
       </div>
     @endforeach
+    {{$donors->appends(['lookup' => request()->lookup])->links()}}
   </div>
-  {{$donors->appends(['lookup' => request()->lookup])->links()}}
+</div>

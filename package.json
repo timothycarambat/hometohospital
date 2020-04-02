@@ -17,5 +17,9 @@
         "laravel-mix": "^1.0",
         "lodash": "^4.17.4",
         "vue": "^2.5.7"
+    },
+    "dependencies": {
+        "jscroll": "^2.4.1",
+        "vanilla-back-to-top": "^7.2.1"
     }
 }

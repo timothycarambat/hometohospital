@@ -25,7 +25,7 @@ class PageController extends Controller
       'city' => $city,
       'soc' => $soc,
       'donor_count' => $donors->count(),
-      'donors' => $donors->paginate(25),
+      'donors' => $donors->paginate(12),
     ]);
   }
 
@@ -47,7 +47,7 @@ class PageController extends Controller
       'city' => $city,
       'soc' => $soc,
       'donor_count' => $donors->count(),
-      'donors' => $donors->paginate(25),
+      'donors' => $donors->paginate(12),
     ]);
   }
 
@@ -67,7 +67,7 @@ class PageController extends Controller
     return view('donors')->with([
       'page' => 'donors',
       'donor_count' => $donors->count(),
-      'donors' => $donors->paginate(50),
+      'donors' => $donors->paginate(12),
     ]);
   }
 

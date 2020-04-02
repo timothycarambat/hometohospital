@@ -22,7 +22,7 @@ class Donor extends Model
 
   public static function getDonorByLocation($city, $soc){
     if( empty($city) || empty($soc)){
-      return Donor::where('confirmed', true).where('city', null);
+      return Donor::where('confirmed', true)->where('city', null);
     } else {
       return Donor::whereRaw("confirmed = true AND (city LIKE '%{$city}%' OR soc LIKE '%{$soc}%')");
     }

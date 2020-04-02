@@ -3,21 +3,4 @@
 
 @import "custom";
 @import "search";
-
-
-@media only screen and (max-width: 768px) {
-  .demo-card-full-width {
-    overflow: scroll;
-  }
-  .mdl-container {
-    padding-top: 15% !important;
-  }
-}
-
-body {
-  overflow-x: hidden;
-}
-
-.mdl-container {
-  padding-top: 5%;
-}
+@import "progress";

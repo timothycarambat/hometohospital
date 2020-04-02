@@ -9,6 +9,8 @@ window._ = require('lodash');
 
 try {
     window.$ = window.jQuery = require('jquery');
+    window.jscroll = require('jscroll');
+    window.btt = require('vanilla-back-to-top');
 
     require('bootstrap-sass');
 } catch (e) {}

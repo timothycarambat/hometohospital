@@ -1,3 +1,22 @@
+@media only screen and (max-width: 768px) {
+  .demo-card-full-width,
+  .mdl-card__supporting-text {
+    overflow: scroll;
+  }
+
+  .mdl-container {
+    padding-top: 15% !important;
+  }
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.mdl-container {
+  padding-top: 5%;
+}
+
 .mdl-navigation__link:hover {
   color: #3f51b5 !important;
 }
@@ -142,21 +161,82 @@
           box-sizing: border-box;
 }
 
-@media only screen and (max-width: 768px) {
-  .demo-card-full-width {
-    overflow: scroll;
-  }
-
-  .mdl-container {
-    padding-top: 15% !important;
-  }
-}
-
-body {
+.slider {
+  position: absolute;
+  width: 1000px;
+  height: 5px;
   overflow-x: hidden;
 }
 
-.mdl-container {
-  padding-top: 5%;
+.line {
+  position: absolute;
+  opacity: 0.4;
+  background: #4a8df8;
+  width: 150%;
+  height: 5px;
+}
+
+.subline {
+  position: absolute;
+  background: #4a8df8;
+  height: 5px;
+}
+
+.inc {
+  -webkit-animation: increase 2s infinite;
+          animation: increase 2s infinite;
+}
+
+.dec {
+  -webkit-animation: decrease 2s 0.5s infinite;
+          animation: decrease 2s 0.5s infinite;
+}
+
+@-webkit-keyframes increase {
+  from {
+    left: -5%;
+    width: 5%;
+  }
+
+  to {
+    left: 130%;
+    width: 100%;
+  }
+}
+
+@keyframes increase {
+  from {
+    left: -5%;
+    width: 5%;
+  }
+
+  to {
+    left: 130%;
+    width: 100%;
+  }
+}
+
+@-webkit-keyframes decrease {
+  from {
+    left: -80%;
+    width: 80%;
+  }
+
+  to {
+    left: 110%;
+    width: 10%;
+  }
+}
+
+@keyframes decrease {
+  from {
+    left: -80%;
+    width: 80%;
+  }
+
+  to {
+    left: 110%;
+    width: 10%;
+  }
 }
 
