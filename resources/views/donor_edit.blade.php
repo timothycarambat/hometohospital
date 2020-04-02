@@ -11,48 +11,14 @@
             <div class="mdl-grid">
                 <div class="demo-card-full-width mdl-card mdl-shadow--2dp" style="width: 100%">
                   <div class="mdl-card__title">
-                    <h1 class="mdl-card__title-text"><b style='color: #7c4dff; font-size: 45px;'>Join The Effort</b></h1>
+                    <h1 class="mdl-card__title-text"><b style='color: #7c4dff; font-size: 45px;'>Edit Donor: {{$donor->first_name}} {{$donor->last_name}}</b></h1>
                   </div>
                   <div class="mdl-card__supporting-text" style="font-size: 20px; height: 100%">
-
-                      <div class="mdl-grid">
-                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label form-input">
-                          <input
-                            class="mdl-textfield__input"
-                            type="text"
-                            pattern="[A-Z,a-z, ]*"
-                            data-required='true'
-                            name='first_name'
-                            onerror="Please enter a valid first name. A-Z only."
-                            >
-                          <label class="mdl-textfield__label" name="first_name">First Name<sup>*</sup></label>
-                        </div>
-
-                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label form-input">
-                          <input
-                          class="mdl-textfield__input"
-                          type="text"
-                          pattern="[A-Z,a-z, ]*"
-                          data-required='true'
-                          name='last_name'
-                          onerror="Please enter a valid last name. A-Z only."
-                          >
-                          <label class="mdl-textfield__label" name="last_name">Last Name<sup>*</sup></label>
-                        </div>
-                      </div>
-
-                      <div class="mdl-grid">
-                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label form-input">
-                          <input
-                            class="mdl-textfield__input"
-                            type="email"
-                            data-required='true'
-                            name='email'
-                            onerror="Please enter a valid Email"
-                            >
-                          <label class="mdl-textfield__label">Email<sup>*</sup></label>
-                        </div>
-                      </div>
+                      <p style="font-size: 18px">
+                        <b style='color: #7c4dff'>Email:</b> {{$donor->email}}
+                        <br>
+                        <b style='color: #7c4dff'>Location:</b> {{$donor->location}}
+                      </p>
 
                       <div class="mdl-grid">
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label form-input">
@@ -61,25 +27,16 @@
                             type="text"
                             name='bio'
                             maxlength="200"
-                            ></textarea>
+                            >{{$donor->bio}}</textarea>
                           <label class="mdl-textfield__label">About You (200 character)</label>
                         </div>
                       </div>
                       <p><b>Tip:</b>Just tell us about yourself and why you're doing what you are doing to help!</p>
 
-                      <div class="mdl-grid" >
-                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label form-input" style="width:50%">
-                          <input
-                            class="mdl-textfield__input"
-                            type="text"
-                            data-required='true'
-                            name='location'
-                            onerror="Please enter a valid Email"
-                            >
-                          <label class="mdl-textfield__label">Location<sup>*</sup> (eg. New Orleans, Louisiana or Seattle, Washington)</label>
-                        </div>
-                        <p><b>Note:</b> Entering your City and State is the best option - no need for a full address. We only retain the City and State on completion. No other data is retained.</p>
-                      </div>
+                      @php
+                        $create_items = $donor->create_items()->pluck('item_id')->toArray();
+                        $donate_items = $donor->donate_items()->pluck('item_id')->toArray();
+                      @endphp
 
                       <div class="mdl-grid" >
                         <div class="mdl-cell mdl-cell--6-col">
@@ -91,7 +48,7 @@
                             </thead>
                             <tbody>
                                 @foreach(App\Item::get() as $key => $item)
-                                  <tr data-item-id="{{$item->id}}" data-item-type="create">
+                                  <tr data-item-id="{{$item->id}}" data-item-type="create" class="{{in_array($item->id, $create_items) ? 'is-selected' : ''}}">
                                     <td class="mdl-data-table__cell--non-numeric">
                                         {{$item->name}}
                                     </td>
@@ -110,7 +67,7 @@
                             </thead>
                             <tbody>
                                 @foreach(App\Item::get() as $key => $item)
-                                  <tr data-item-id="{{$item->id}}" data-item-type="supply">
+                                  <tr data-item-id="{{$item->id}}" data-item-type="supply" class="{{in_array($item->id, $donate_items) ? 'is-selected' : ''}}">
                                     <td class="mdl-data-table__cell--non-numeric">
                                         {{$item->name}}
                                     </td>
@@ -121,8 +78,8 @@
                       </div>
 
                       <div hidden id='loader' class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
-                      <button onclick='submitDonor()' id='submit' class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                        SUBMIT Donor
+                      <button onclick='updateDonor({{$donor->id}})' id='submit' class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        Update Information
                       </button>
                   </div>
                   <div class="mdl-card__menu">

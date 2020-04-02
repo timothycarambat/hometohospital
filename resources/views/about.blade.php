@@ -23,9 +23,9 @@
                     This application brings people who can and do want to provide additional PPE - either by sewing and seaming the PPE themselves
                     from what is around or by donating off-the-shelf PPE to our healthcare workers.
                     <br><br>
-                    If you are a healthcare worker and need PPE, or a hosptial admin who requires more PPE - contact our donors for your area. 
+                    If you are a healthcare worker and need PPE, or a hosptial admin who requires more PPE - contact our donors for your area.
                     <br><br>
-                    No Account is required to be listed. All you need is an email and you can begin helping flatten the curve.
+                    No Account is required to be listed. All you need is a valid email and you can begin helping to flatten the curve.
                     <br><br>
                     <a href='https://twitter.com/tcarambat'>-Tim</a>
                     <br><br>

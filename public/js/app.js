@@ -32343,6 +32343,54 @@ $(function () {
         var res = JSON.parse(result);
 
         if (res.status) {
+          window.location = '/donor/' + res.id + '/complete';
+        } else {
+          alert(res.msg);
+          toggleSubmitLoader();
+        }
+      }
+    });
+  };
+
+  window.updateDonor = function (id) {
+    toggleSubmitLoader();
+    var errorFields = [];
+    var items = [];
+    var fields = ['bio'];
+    var data = {
+      id: id
+    };
+
+    // validate input/textarea fields
+    fields.map(function (field) {
+      var value = $('[name=\'' + field + '\']').val();
+      data[field] = value;
+    });
+
+    // collect all items
+    $('tr.is-selected').each(function (idx, el) {
+      items.push([$(el).data('item-id'), $(el).data('item-type')]);
+    });
+
+    // push error message to array if you have noting selected
+    items.length === 0 ? errorFields.push('items') : null;
+    // show errors
+    if (errorFields.length > 0) {
+      toggleSubmitLoader();
+      alert(errorFields.join(' ,') + ' cannot be empty.');
+      return false;
+    }
+    // items appended to data obj
+    data.items = items;
+
+    $.ajax({
+      url: '/donor/update',
+      type: 'POST',
+      data: data,
+      success: function success(result) {
+        var res = JSON.parse(result);
+
+        if (res.status) {
           window.location = '/donor/' + res.id + '/details';
         } else {
           alert(res.msg);

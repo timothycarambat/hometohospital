@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Redirect;
 
 use App\Donor;
@@ -11,12 +12,12 @@ use App\Utils;
 class PageController extends Controller
 {
   public function home(Request $request) {
-    if (Donor::count() == 0){
+    if (Donor::where('confirmed', true)->count() == 0){
       return Redirect::to('/donors');
     }
 
-    $city = is_null($request->city) ? Donor::first()->city : $request->city;
-    $soc = is_null($request->soc) ? Donor::first()->soc : $request->soc;
+    $city = is_null($request->city) ? Donor::where('confirmed', true)->first()->city : $request->city;
+    $soc = is_null($request->soc) ? Donor::where('confirmed', true)->first()->soc : $request->soc;
     $donors = Donor::getDonorByLocation($city, $soc);
 
     return view('home')->with([
@@ -61,7 +62,7 @@ class PageController extends Controller
   }
 
   public function donors(Request $request) {
-    $donors = Donor::OrderBy('last_name');
+    $donors = Donor::where('confirmed', true)->OrderBy('last_name');
 
     return view('donors')->with([
       'page' => 'donors',
@@ -88,6 +89,44 @@ class PageController extends Controller
   public function about(Request $request) {
     return view('about')->with([
       'page' => 'about'
+    ]);
+  }
+
+  public function confirmed(Request $request) {
+    $donor = Donor::where('hash', $request->hash)->get();
+
+    if ($donor->count() > 0) {
+      $donor = $donor[0];
+      $donor->update(['confirmed' => true]);
+      Event::fire('App\Events\DonorConfirmed', $donor);
+    } else {
+      return Redirect::to('/404');
+    }
+
+    return view('confirmed')->with([
+      'page' => 'confirmed',
+      'donor' => $donor,
+    ]);
+  }
+
+  public function complete(Request $request) {
+    $donor = Donor::find($request->id);
+
+    return view('signup_complete')->with([
+      'page' => 'signup_complete',
+      'donor' => $donor,
+    ]);
+  }
+
+  public function donor_edit(Request $request) {
+    $donor = Donor::where('hash', $request->hash)->get();
+    if ($donor->count() == 0) {
+      return Redirect::to('/404');
+    }
+
+    return view('donor_edit')->with([
+      'page' => 'donor_edit',
+      'donor' => $donor->first(),
     ]);
   }
 }

@@ -12,17 +12,19 @@ class Donor extends Model
     'first_name',
     'last_name',
     'email',
+    'bio',
     'city',
     'soc',
     'location',
     'hash',
+    'confirmed',
   ];
 
   public static function getDonorByLocation($city, $soc){
     if( empty($city) || empty($soc)){
-      return Donor::where('city', null);
+      return Donor::where('confirmed', true).where('city', null);
     } else {
-      return Donor::whereRaw("city LIKE '%{$city}%' AND soc LIKE '%{$soc}%'");
+      return Donor::whereRaw("confirmed = true AND (city LIKE '%{$city}%' OR soc LIKE '%{$soc}%')");
     }
   }
 

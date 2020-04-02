@@ -39,6 +39,33 @@
         <img height='36' style='border:0px;height:36px;' src='/img/kofi.png' border='0' alt='Buy Me a Coffee at ko-fi.com' />
       </a>
 
+      <div class="mdl-navigation__link">
+          <!-- Email -->
+          <a href="mailto:?Subject={{$_ENV['APP_NAME']}}&Body={{$_ENV['APP_URL']}}">
+              <img style='width: 30px;padding: 5px;border: 0;box-shadow: 0;display: inline;' src="https://simplesharebuttons.com/images/somacro/email.png" alt="Email" />
+          </a>
+
+          <!-- Facebook -->
+          <a href="http://www.facebook.com/sharer.php?u={{$_ENV['APP_URL']}}" target="_blank">
+              <img style='width: 30px;padding: 5px;border: 0;box-shadow: 0;display: inline;' src="https://simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" />
+          </a>
+
+          <!-- LinkedIn -->
+          <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url={{$_ENV['APP_URL']}}" target="_blank">
+              <img style='width: 30px;padding: 5px;border: 0;box-shadow: 0;display: inline;' src="https://simplesharebuttons.com/images/somacro/linkedin.png" alt="LinkedIn" />
+          </a>
+
+          <!-- Reddit -->
+          <a href="http://reddit.com/submit?url={{$_ENV['APP_URL']}}&title={{$_ENV['APP_NAME']}}" target="_blank">
+              <img style='width: 30px;padding: 5px;border: 0;box-shadow: 0;display: inline;' src="https://simplesharebuttons.com/images/somacro/reddit.png" alt="Reddit" />
+          </a>
+
+          <!-- Twitter -->
+          <a href="https://twitter.com/share?url={{$_ENV['APP_URL']}}&text={{$_ENV['APP_NAME']}}&hashtags=hometohospital" target="_blank">
+              <img style='width: 30px;padding: 5px;border: 0;box-shadow: 0;display: inline;' src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
+          </a>
+      </div>
+
     </nav>
   </div>
 </div>

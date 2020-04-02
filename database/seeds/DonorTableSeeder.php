@@ -37,6 +37,7 @@ class DonorTableSeeder extends Seeder
             'soc' => $randLocation[1],
             'location' => $location,
             'hash' => str_random(40),
+            'confirmed' => true,
           ]);
 
 

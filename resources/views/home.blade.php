@@ -29,7 +29,7 @@
                       <ul style="font-size: 18px">
                         <li>Make sure you typed in everything correctly. At a <b class='donor-title'>minumum</b> you need to have at least a city and a state. Try fully spelling out the state. (eg. New Orleans, Louisiana)</li>
                         <li>Try Searching in nearby cities.</li>
-                        <li>We currently have <b class='donor-title'>{{number_format(\App\Donor::count())}} Donors</b> - your area could just have no donors.</li>
+                        <li>We currently have <b class='donor-title'>{{number_format(\App\Donor::where('confirmed', true)->count())}} Donors</b> - your area could just have no donors.</li>
                         <li>
                           Go to our <a href="/locations">Locations Page</a> to see each location that has donors.
                         </li>

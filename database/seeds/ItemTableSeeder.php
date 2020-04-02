@@ -12,6 +12,12 @@ class ItemTableSeeder extends Seeder {
         'Gowns',
         'Headbands',
         'Shoe Covers',
+        'Medical Gloves',
+        'Ventilators',
+        'Goggles/Eyewear',
+        'Scrubs',
+        'Accessories',
+        'Other'
       ];
 
       foreach($items as $item) {

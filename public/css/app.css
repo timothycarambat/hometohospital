@@ -104,6 +104,10 @@
   font-size: 25px;
 }
 
+.mdl-navigation__link > a {
+  text-decoration: none !important;
+}
+
 .search-card {
   min-height: 0;
   margin: auto;
