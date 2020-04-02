@@ -13,10 +13,11 @@ class ItemTableSeeder extends Seeder {
         'Headbands',
         'Shoe Covers',
         'Medical Gloves',
-        'Ventilators',
         'Goggles/Eyewear',
         'Scrubs',
         'Accessories',
+        'Tech. Devices',
+        'Cleaning Supplies',
         'Other'
       ];
 

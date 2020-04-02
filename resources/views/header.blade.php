@@ -10,7 +10,15 @@
     </div>
   </header>
   <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title">{{$_ENV['APP_NAME']}}</span>
+    <span class="mdl-layout-title">
+      {{$_ENV['APP_NAME']}}
+      <p style="font-size: 10px;
+                line-height: 10px;
+                margin-top: -8%;
+                padding-left: 30%;
+                color: #dedede;
+                ">v{{$_ENV['APP_VERSION']}}</p>
+    </span>
     <nav class="mdl-navigation">
       <a class="mdl-navigation__link {{Request::is('/') ? 'active ' : ''}}" href="/">
         <i class="material-icons">home</i>
