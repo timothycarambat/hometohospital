@@ -92,6 +92,12 @@ class PageController extends Controller
     ]);
   }
 
+  public function resources(Request $request) {
+    return view('resources')->with([
+      'page' => 'resources'
+    ]);
+  }
+
   public function confirmed(Request $request) {
     $donor = Donor::where('hash', $request->hash)->get();
 

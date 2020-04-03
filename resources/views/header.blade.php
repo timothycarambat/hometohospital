@@ -40,6 +40,10 @@
         <i class="material-icons">info_outline</i>
         About
       </a>
+      <a class="mdl-navigation__link {{Request::is('resources') ? 'active ' : ''}}" href="/resources">
+        <i class="material-icons">description</i>
+        Resources
+      </a>
       <a class="mdl-navigation__link" href="mailto:{{$_ENV['SUPPORT_EMAIL']}}">
         <i class="material-icons">mail_outline</i> Contact Me
       </a>
